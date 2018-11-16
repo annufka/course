@@ -2,56 +2,52 @@ import functools
 
 
 def lfu_cache(max_size):
-    cache = {}
+    cache: dict = {}
     hits = misses = 0
 
     def deco(user_func):
         @functools.wraps(user_func)
-        def inner(args):
-            key = args
-            nonlocal cache
+        def inner(*arg_func, **kwargs):
+
+            key = arg_func + tuple(sorted(kwargs.items()))
+            nonlocal cache, misses, hits
             if key not in cache:
-                n = 1
-                nonlocal misses
                 misses += 1
                 if len(cache) < max_size:
-                    cache[key] = {'result': user_func(args), 'n': n}
-                else:
-                    cache_my = cache.copy()
-                    cache.clear()
-                    list_cache = list(cache_my)
-                    list_cache = list_cache.sort(reverse=True)
-                    list_cache = list_cache.pop()
-                    for item in cache_my:
-                        cache[item] = cache_my.get(item)
-                    cache[key] = {'result': user_func(args), 'n': n}
+                    cache[key] = {'result': user_func(*arg_func, **kwargs), 'n': 1}
+                elif len(cache) >= max_size:
+                    dict_for_min = {}
+                    for item in cache:
+                        dict_value = cache.get(item)
+                        dict_for_min[item] = dict_value.get('n')
+                    del_key = min([key_for_del for key_for_del, value_for_del in dict_for_min.items() if
+                                   value_for_del == min(dict_for_min.values())])
+                    del cache[del_key]
+                    cache[key] = {'result': user_func(*arg_func, **kwargs), 'n': 1}
             else:
-                nonlocal hits
                 hits += 1
-                cache.get(args)
-                n = cache[args]['n']
-                n += 1
-                cache[args]['n'] = n
-            return cache[key]
+                cache[key]['n'] += 1
+            return cache[key]['result']
 
         def info():
             nonlocal hits, misses, cache, max_size
-            return ('hits: {}, misses: {}, size: {}, max_size: {}'.format(hits, misses, len(cache), max_size))
+            return 'hits: {}, misses: {}, size: {}, max_size: {}'.format(hits, misses, len(cache), max_size)
 
         def clear():
             nonlocal hits, misses
             cache.clear()
             hits = 0
             misses = 0
+
         inner.clear = clear
-        
         inner.info = info
+        inner.cache = cache
         return inner
 
     return deco
 
 
-@lfu_cache(max_size=2)
+@lfu_cache(max_size=10)
 def fib(n) -> int:
     """
     the Fibonacci Sequence
@@ -61,4 +57,5 @@ def fib(n) -> int:
     return fib(n - 1) + fib(n - 2)
 
 
-fib(3)
+fib(20)
+print(fib.info())
