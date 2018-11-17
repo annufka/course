@@ -8,10 +8,14 @@ def lfu_cache(max_size):
     def deco(user_func):
         @functools.wraps(user_func)
         def inner(*arg_func, **kwargs):
-            result = user_func(*arg_func, **kwargs)
+            
             key = arg_func + tuple(sorted(kwargs.items()))
             nonlocal cache, misses, hits
-            if key not in cache:
+            if cache.get(key):
+                hits += 1
+                cache[key]['n'] += 1
+            else:
+                result = user_func(*arg_func, **kwargs)
                 if len(cache) < max_size:
                     cache[key] = {'result': result, 'n': 1}
                     misses += 1
@@ -24,9 +28,7 @@ def lfu_cache(max_size):
                     del cache[del_key]
                     cache[key] = {'result': result, 'n': 1}
                     misses += 1
-            else:
-                hits += 1
-                cache[key]['n'] += 1
+            
             return cache[key]['result']
 
         def info():
@@ -47,7 +49,7 @@ def lfu_cache(max_size):
     return deco
 
 
-@lfu_cache(max_size=10)
+@lfu_cache(max_size=4)
 def fib(n) -> int:
     """
     the Fibonacci Sequence
@@ -57,6 +59,6 @@ def fib(n) -> int:
     return fib(n - 1) + fib(n - 2)
 
 
-fib(20)
+fib(8)
 print(fib.info())
 print(fib.cache)

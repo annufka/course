@@ -11,7 +11,10 @@ def lru_cache(max_size):
             result = user_func(*arg_func, **kwargs)
             key = arg_func + tuple(sorted(kwargs.items()))
             nonlocal cache, misses, hits
-            if key not in cache:
+            if cache.get(key):
+                hits += 1
+                cache[key]['time'] = time.time()
+            else:
                 if len(cache) < max_size:
                     cache[key] = {'result': result, 'time': time.time()}
                     misses += 1
@@ -24,9 +27,7 @@ def lru_cache(max_size):
                     del cache[del_key]
                     cache[key] = {'result': result, 'time': time.time()}
                     misses += 1
-            else:
-                hits += 1
-                cache[key]['time'] = time.time()
+            
             return cache[key]['result']
 
         def info():
