@@ -10,24 +10,36 @@ def abc(my_secret_key):
             shift += 2
         else:
             shift += 3
-        return shift
+    return shift
 
 def encode(my_text_input, my_secret_key):
+    shift = abc(my_secret_key)
     for letter_in_text in range(len(my_text_input)):
-        index_new_letter = alphabet.index(my_text_input[letter_in_text]) + abc(my_secret_key)
+        if my_text_input[letter_in_text] == ' ':
+            continue
+        index_new_letter = alphabet.index(my_text_input[letter_in_text]) + shift
         if index_new_letter > 25:
-            index_new_letter = index_new_letter % 25
+            index_new_letter = (index_new_letter % 25) - 1
         my_text_input = my_text_input[:letter_in_text] + alphabet[index_new_letter] + my_text_input[letter_in_text+1:]
     return my_text_input
 
 
 def decode(my_text_input, my_secret_key):
+    shift = abc(my_secret_key)
     for letter_in_text in range(len(my_text_input)):
-        index_new_letter = alphabet.index(my_text_input[letter_in_text]) + abc(my_secret_key)
+        if my_text_input[letter_in_text] == ' ':
+            continue
+        index_new_letter = alphabet.index(my_text_input[letter_in_text]) - shift
         if index_new_letter < 0:
-            index_new_letter = 25 + index_new_letter
+            index_new_letter = 25 + index_new_letter + 1
         my_text_input = my_text_input[:letter_in_text] + alphabet[index_new_letter] + my_text_input[letter_in_text+1:]
     return my_text_input
 
-print('vbvhdac', encode('vbvhdac', 'aku'))
-print('wcwiebd', decode('wcwiebd', 'aku'))
+print(encode('park', 'aku'))
+print(decode('vgxq', 'aku'))
+
+print(encode('park', 'my key'))
+print(decode('dofy', 'my key'))
+
+print(encode('how are you', 'my key'))
+print(decode('vck ofs mci', 'my key'))
