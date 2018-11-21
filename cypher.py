@@ -1,20 +1,21 @@
 import string
 
 en_alphabet = string.ascii_lowercase
-ru_alphabet = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
 
 
 def abc(my_secret_key: str) -> int:
     """
     It function return shift. Shift is the sum of 1,2,3
     """
+    #объявление переменной, которая используется для "сдвига" символов 
     shift = 0
+    #предположим, что ключ может состоять только из символов английского алфавита. Каждому символу соответствует свой сдвиг
     for letter in my_secret_key:
         if letter in en_alphabet[0:9]:
             shift += 1
         elif letter in en_alphabet[9:20]:
             shift += 2
-        elif letter in en_alphabet[20:25]:
+        else:
             shift += 3
     return shift
 
@@ -24,24 +25,20 @@ def encode(my_text_input: str, my_secret_key: str) -> str:
     Function for encode some text
     """
     shift = abc(my_secret_key)
-    for letter_in_text in range(len(my_text_input)):
-        if my_text_input[letter_in_text] == ' ' or my_text_input[letter_in_text] in string.punctuation:
-            continue
-        if my_text_input[letter_in_text].lower() in en_alphabet:
-            index_new_letter = en_alphabet.index(my_text_input[letter_in_text].lower()) + shift
-            if index_new_letter > 25:
-                index_new_letter = (index_new_letter % 25) - 1
-            my_text_input = my_text_input[:letter_in_text] + (
-                en_alphabet[index_new_letter] if my_text_input[letter_in_text].islower() == True else en_alphabet[
-                    index_new_letter].upper()) + my_text_input[letter_in_text + 1:]
-        if my_text_input[letter_in_text].lower() in ru_alphabet:
-            index_new_letter = ru_alphabet.index(my_text_input[letter_in_text].lower()) + shift
-            if index_new_letter > 32:
-                index_new_letter = (index_new_letter % 32) - 1
-            my_text_input = my_text_input[:letter_in_text] + (
-                ru_alphabet[index_new_letter] if my_text_input[letter_in_text].islower() == True else ru_alphabet[
-                    index_new_letter].upper()) + my_text_input[letter_in_text + 1:]
-    return my_text_input
+    #получим значение символа в unicode
+    unicode_string = list(map(ord, my_text_input))
+    for letter_in_text in range(len(unicode_string)):
+        #номер нового символа
+        number_new_letter = unicode_string[letter_in_text] + shift
+        #если вдруг мы вышли за пределы 2**16, то начнем индексы считать сначала
+        if number_new_letter > 2 ** 16:
+            number_new_letter = (number_new_letter % (2 ** 16)) - 1
+        #меняем в нашем списке код символа
+        unicode_string[letter_in_text] = number_new_letter
+    #возвращаем символы
+    my_text_input = list(map(chr, unicode_string))
+    #возвращаем вместо списка строку
+    return str("".join(my_text_input))
 
 
 def decode(my_text_input, my_secret_key):
@@ -49,24 +46,20 @@ def decode(my_text_input, my_secret_key):
     Function for decode some text
     """
     shift = abc(my_secret_key)
-    for letter_in_text in range(len(my_text_input)):
-        if my_text_input[letter_in_text] == ' ' or my_text_input[letter_in_text] in string.punctuation:
-            continue
-        if my_text_input[letter_in_text].lower() in en_alphabet:
-            index_new_letter = en_alphabet.index(my_text_input[letter_in_text].lower()) - shift
-            if index_new_letter < 0:
-                index_new_letter = 25 + index_new_letter + 1
-            my_text_input = my_text_input[:letter_in_text] + (
-                en_alphabet[index_new_letter] if my_text_input[letter_in_text].islower() == True else en_alphabet[
-                    index_new_letter].upper()) + my_text_input[letter_in_text + 1:]
-        if my_text_input[letter_in_text].lower() in ru_alphabet:
-            index_new_letter = ru_alphabet.index(my_text_input[letter_in_text].lower()) - shift
-            if index_new_letter < 0:
-                index_new_letter = 32 + index_new_letter + 1
-            my_text_input = my_text_input[:letter_in_text] + (
-                ru_alphabet[index_new_letter] if my_text_input[letter_in_text].islower() == True else ru_alphabet[
-                    index_new_letter].upper()) + my_text_input[letter_in_text + 1:]
-    return my_text_input
+    #получим значение символа в unicode
+    unicode_string = list(map(ord, my_text_input))
+    for letter_in_text in range(len(unicode_string)):
+        #получим значение символа в unicode
+        number_new_letter = unicode_string[letter_in_text] - shift
+        #маловероятный случай
+        if number_new_letter > 2 ** 16:
+            number_new_letter = (number_new_letter % (2 ** 16)) + 1
+        #меняем в нашем списке код символа
+        unicode_string[letter_in_text] = number_new_letter
+        #возвращаем символы
+    my_text_input = list(map(chr, unicode_string))
+    #возвращаем символы
+    return str("".join(my_text_input))
 
 
 print(decode(encode('park', 'aku'), 'aku'))
