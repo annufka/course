@@ -8,15 +8,7 @@ def abc(my_secret_key: str) -> int:
     It function return shift. Shift is the sum of 1,2,3
     """
     #объявление переменной, которая используется для "сдвига" символов 
-    shift = 0
-    #предположим, что ключ может состоять только из символов английского алфавита. Каждому символу соответствует свой сдвиг
-    for letter in my_secret_key:
-        if letter in en_alphabet[0:9]:
-            shift += 1
-        elif letter in en_alphabet[9:20]:
-            shift += 2
-        else:
-            shift += 3
+    shift = hash(my_secret_key) % (2**16)
     return shift
 
 
