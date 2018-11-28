@@ -16,17 +16,14 @@ class Distance:
     @in_feet.setter
     def in_feet(self, metres):
         self.metres = metres
-        return self.metres * 3.2808399
     
     @in_steps.setter
     def in_steps(self, metres):
         self.metres = metres
-        return self.metres * 2
     
     @in_parsecs.setter
     def in_parsecs(self, metres):
         self.metres = metres
-        return self.metres * 3.24078 * 10 ** (-17)
 
 distance = Distance()
 distance.metres = 1000.0
