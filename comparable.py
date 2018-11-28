@@ -1,36 +1,34 @@
 import functools
 
 def comparable(cls):
+    """
+    Декоратор ласса, который служит для сравнения экземпляров класса
+    """
+    #копируем всю информацию о классе
     @functools.wraps(cls)
-    def deco(self, func):
-        def inner(self, *args, func):
-            first_value, second_value = cls(*args)
-            if func == '!=':
-                return first_value != second_value
-            elif func == '==':
-                return first_value == second_value
-            elif func == '>=':
-                return first_value >= second_value
-            elif func == '<=':
-                return first_value <= second_value
-            elif func == '>':
-                return first_value > second_value
-            elif func == '<':
-                return first_value < second_value
-
-        return deco(self, func)
-
-    return comparable(cls)
-
+    def inner(*args):
+        #присваиваем полученное значение
+        value = args
+        #возвращаем значение
+        return value
+    return inner
 
 @comparable
 class Worker:
-    @property
-    def begin(self):
-        self.first_value = first_value
-        self.second_value = second_value
-        self.func = func
+    """
+    класс, который просто принимает значение и ничегошеньки не делает
+    """
+    def __init__(self, value: int):
+        self.value = value
 
-
-a = Worker()
-a.begin(5, 7, '==')
+worker1 = Worker(6)
+worker2 = Worker(2)
+worker3 = Worker(1)
+worker4 = Worker(6)
+print(worker1 < worker2)#False
+print(worker3 < worker2)#True
+print(worker1 != worker2)#True
+print(worker1 == worker2)#False
+print(worker1 <= worker2)#False
+print(worker1 >= worker2)#True
+print(worker1 == worker4)#True
