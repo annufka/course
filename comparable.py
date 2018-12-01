@@ -1,34 +1,64 @@
 import functools
 
+
 def comparable(cls):
-    """
-    Декоратор ласса, который служит для сравнения экземпляров класса
-    """
-    #копируем всю информацию о классе
-    @functools.wraps(cls)
-    def inner(*args):
-        #присваиваем полученное значение
-        value = args
-        #возвращаем значение
-        return value
-    return inner
+    # magic
+    class Wrapper:
+        def __eq__(self, other):
+            def __init__(self, *args):
+                super().__init__(*args)
+            return self.args == other.args
+
+        def __ne__(self, other):
+            def __init__(self, *args):
+                super().__init__(*args)
+            return self.args != other.args
+
+        def __lt__(self, other):
+            def __init__(self, *args):
+                super().__init__(*args)
+            return self.args < other.args
+
+        def __le__(self, other):
+            def __init__(self, *args):
+                super().__init__(*args)
+            return self.args <= other.args
+
+        def __gt__(self, other):
+            def __init__(self, *args):
+                super().__init__(*args)
+            return self.args > other.args
+
+        def __ge__(self, other):
+            def __init__(self, *args):
+                super().__init__(*args)
+            return self.args >= other.args
+
+        # magic
+
+    return Wrapper
+
 
 @comparable
 class Worker:
     """
     класс, который просто принимает значение и ничегошеньки не делает
     """
-    def __init__(self, value: int):
+    def __init__(self, value):
         self.value = value
 
-worker1 = Worker(6)
-worker2 = Worker(2)
-worker3 = Worker(1)
-worker4 = Worker(6)
-print(worker1 < worker2)#False
-print(worker3 < worker2)#True
-print(worker1 != worker2)#True
-print(worker1 == worker2)#False
-print(worker1 <= worker2)#False
-print(worker1 >= worker2)#True
-print(worker1 == worker4)#True
+worker1 = Worker()
+worker1 = 6
+worker2 = Worker()
+worker2 = 2
+worker3 = Worker()
+worker3 = 1
+worker4 = Worker()
+worker4 = 6
+print(worker1 < worker2)  # False
+print(worker3 < worker2)  # True
+print(worker1 != worker2)  # True
+print(worker1 == worker2)  # False
+print(worker1 <= worker2)  # False
+print(worker1 >= worker2)  # True
+print(worker1 == worker4)  # True
