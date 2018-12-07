@@ -1,16 +1,16 @@
 class OnlyASCII:
     def __get__(self, instance, owner):
-        #проверка, являются ли символы ascii
+        return instance.__dict__[self.name]
+        
+
+    def __set__(self, instance, value):
+        instance.__dict__[self.name] = value
         try:
             instance.__dict__[self.name].encode('ascii')
         #если нет, то вернем сообщение
         except UnicodeEncodeError:
-            return "You entered bad name"
-        #если все хорошо, то вернем введенное имя
-        return instance.__dict__[self.name]
+            instance.__dict__[self.name] = None
 
-    def __set__(self, instance, value):
-        instance.__dict__[self.name] = value
 
     def __set_name__(self, owner, name):
         self.name = name
