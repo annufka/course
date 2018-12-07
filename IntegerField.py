@@ -3,10 +3,12 @@ class IntegerField:
         return instance.__dict__[self.name]
         
     def __set__(self, instance, value):
-        instance.__dict__[self.name] = value
-        #проверим тип возраста, если не int, то вернем сообщение, что это float число либо не число
-        if type(instance.__dict__[self.name]) != int:
+        
+        #проверим тип возраста, если не int, то вернем None
+        if type(value) != int:
             instance.__dict__[self.name] = None
+        else:
+            instance.__dict__[self.name] = value
         
 
     def __set_name__(self, owner, name):
