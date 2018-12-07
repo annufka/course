@@ -4,12 +4,13 @@ class OnlyASCII:
         
 
     def __set__(self, instance, value):
-        instance.__dict__[self.name] = value
         try:
-            instance.__dict__[self.name].encode('ascii')
+            value.encode('ascii')
         #если нет, то вернем сообщение
         except UnicodeEncodeError:
             instance.__dict__[self.name] = None
+        else:
+            instance.__dict__[self.name] = value
 
 
     def __set_name__(self, owner, name):
