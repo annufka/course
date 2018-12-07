@@ -3,9 +3,9 @@ class Price:
     def __get__(self, instance, owner):
         return instance.value
     def __set__(self, instance, value):
-        instance.value = value
+        
     #если цена больше нуля и меньше либо равна 100
-        if instance.value <= 100 and instance.value > 0:
+        if value <= 100 and value > 0:
             instance.value = value
         else:
             instance.value = None
