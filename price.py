@@ -1,16 +1,15 @@
 class Price:
   #дескриптор, не позволяющий установить слишком низкую / высокую стоимость
-  def __get__(self, instance, owner):
+    def __get__(self, instance, owner):
+        return instance.value
+    def __set__(self, instance, value):
+        instance.value = value
     #если цена больше нуля и меньше либо равна 100
-    if instance.value <= 100 and instance.value > 0:
-      return instance.value
-    else:
-      #иначе вернем сообщение
-      return "You entered bad value for price"
-  def __set__(self, instance, value):
-    instance.value = value
+        if instance.value <= 100 and instance.value > 0:
+            instance.value = value
+        else:
+            instance.value = None
     
-
 class Book:
   price = Price()
  
