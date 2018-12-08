@@ -2,8 +2,8 @@ class Singleton(type):
     def __call__(self, *args, **kwargs):
         # создаём новый класс как обычно
         cls = type.__call__(self, *args)
-        call += 1
-        if call <= 1:
+        self.call += 1
+        if self.call <= 1:
         # возвращаем класс
             return cls
         else:
