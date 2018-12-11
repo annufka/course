@@ -17,8 +17,10 @@ def dummy_grouper(data, n):
 list(dummy_grouper(range(100000000), 10))
 
 
+def dummy_grouper(data, n):
+    result_all = []
+    for i in range(n):
+        result_all.append(tuple(range(i, len(data), n)))
+    return zip(*result_all)
 
-
-
-
-
+list(dummy_grouper(range(10000000), 10))
