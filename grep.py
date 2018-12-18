@@ -1,23 +1,20 @@
 import functools
 import time
-import io
 
 def coroutine(g):
     @functools.wraps(g)
     def inner(*args, **kwargs):
-        gen = g()
+        gen = g(*args, **kwargs)
         next(gen)
         return gen
     return inner
 
-
 @coroutine
-def grep(*args):
-    what_we_find = args
+def grep(what_we_find, func):
     while True:
         line = (yield)
         if what_we_find in line:
-            printer.send(line)
+            func.send(line)
             
 @coroutine
 def printer():
@@ -25,50 +22,31 @@ def printer():
         line = (yield)
         print(line)
 
-
 @coroutine
-def dispenser(*args):
+def dispenser(func):
     while True:
-        item = (yield)
-        for target in args:
-            grep.send(item)
+        line = (yield)
+        for one_func in func:
+            one_func.send(line)
 
-
-def follow(*args):
-    thefile, thefunc = args
+def follow(thefile, thefunc):
     thefile.seek(0, 2)
     while True:
-        line = thefile.readline()
-        if line == None:
-            time.sleep(.5)
+        try:
+            line = thefile.readline()
+        except:
+            time.sleep(5)
         else:
             thefunc.send(line)
         
-    
+        
 
-
-f_open = io.StringIO('''first line python
-second line
-third python
-fourth
-fifth''')
+f_open = open('log.txt', 'r') # подключаемся к файлу
 follow(f_open,
        # делегируем ивенты
        dispenser([
-            grep('python', printer()), # отслеживаем  
-            grep('is', printer()),     # заданные
-            grep('great', printer()),  # сигнатуры
+           grep('python', printer()), # отслеживаем  
+           grep('is', printer()),     # заданные
+           grep('great', printer()),  # сигнатуры
        ])
        )
-       
-f_open.write('''first line python
-second line
-third python
-fourth
-fifth''')
-
-f_open.write('''first line python
-second line
-third python
-python
-python line''')
