@@ -14,3 +14,4 @@ BigData
 
 Нейронные сети
 1. Kaggle
+2. OpenCV
