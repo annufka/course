@@ -6,3 +6,11 @@ iOT
 1. ROS
 2.pyBoard
 
+BigData
+1. NumPy
+2. Pandas
+3. SciPy
+4. SciKit-learn типо MachineLearning
+
+Нейронные сети
+1. Kaggle
