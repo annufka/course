@@ -19,6 +19,6 @@ BigData
 
 Python
 Django|Flask
-база данных
+база данных (нормальные формы)
 unix
 GIT
