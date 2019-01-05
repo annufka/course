@@ -15,3 +15,10 @@ BigData
 Нейронные сети
 1. Kaggle
 2. OpenCV
+
+
+Python
+Django|Flask
+база данных
+unix
+GIT
